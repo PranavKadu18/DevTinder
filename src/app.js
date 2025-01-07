@@ -2,13 +2,14 @@ const express = require("express");
 
 const app = express();
 
-app.get("/user",(req,res) => {
+app.get(/.*man$/,(req,res) => {
     //get the data from data base
     res.send("got the data of the users");
 })
 
-app.get("/user/1",(req,res) => {
-    res.send("got the data from the first user");
+app.get("/user/:userid/:name",(req,res) => {
+    console.log(req.params);
+    res.send(req.params);
 })
 
 app.post("/user",(req,res) => {
@@ -25,6 +26,6 @@ app.put("/user",(req,res) => {
     res.send("data is updated by replacement");
 })
 
-app.listen(3000,() => {
+app.listen(7777,() => {
     console.log("connection established");
 })
