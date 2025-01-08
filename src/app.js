@@ -5,15 +5,19 @@ const app = express();
 
 
 app.get("/user",(req,res,next) => {
-    throw new Error("fskhsfdfs");
-    res.send("user")
-})
-
-app.use("/",(err,req,res,next) => {
-    if(err){
-        res.status(500).send("unexpected error occured");
+    try {
+        throw new Error("fskhsfdfs");
+        res.send("user")
+    } catch (error) {
+        res.status(500).send("unexpected error occured");   
     }
 })
+
+// app.use("/",(err,req,res,next) => {
+//     if(err){
+//         res.status(500).send("unexpected error occured");
+//     }
+// })
 
 
 app.listen(3000, () => {
