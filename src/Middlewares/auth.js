@@ -20,6 +20,9 @@ const userAuth = (req,res,next) => {
     }
 }
 
+console.log("are woh are woh !");
+
+
 module.exports = {
     adminAuth,
     userAuth
