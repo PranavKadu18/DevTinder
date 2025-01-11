@@ -18,7 +18,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
-app.get("/users", async (req, res) => {
+app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
     res.send(users);
@@ -27,41 +27,46 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/byemail", async (req, res) => {
-  const userEmail = req.body.email;
-
-  try {
-    const result = await User.findOne({ email: userEmail });
-
-    if (result == null) {
-      res.status(404).send("user not found");
-    }
-    else
-    {
-        res.send(result);
-    }
-
-  } catch (error) {
-    res.status(400).send("Something went wrong");
-  }
-});
-
-app.get("/byid",async (req,res) => {
+app.get("/user",async (req,res) => {
     const id = req.body.id;
 
     try {
         const result = await User.findById(id);
-        res.send(result);
+        if(result == null)
+        {
+            res.status(404).send("User not found");
+        } 
+        else res.send(result);
     } catch (error) {
         res.status(400).send("Something went wrong");
     }
 })
 
-app.delete("/users",async (req,res) => {
-    const emailid = req.body.email
+// app.get("/byemail", async (req, res) => {
+//   const userEmail = req.body.email;
+
+//   try {
+//     const result = await User.findOne({ email: userEmail });
+
+//     if (result == null) {
+//       res.status(404).send("user not found");
+//     }
+//     else
+//     {
+//         res.send(result);
+//     }
+
+//   } catch (error) {
+//     res.status(400).send("Something went wrong");
+//   }
+// });
+
+
+app.delete("/user",async (req,res) => {
+    const id = req.body.id
 
     try {
-        const result = await User.findOneAndDelete({email : emailid})
+        const result = await User.findByIdAndDelete(id)
         if(result == null)
         {
             res.status(404).send("user not found")
@@ -71,6 +76,25 @@ app.delete("/users",async (req,res) => {
         res.status(400).send("Something went wrong");
     }
 })
+
+app.patch("/user",async (req,res) => {
+    const id = req.body.id;
+    const up = req.body;
+
+    try {
+        const result = await User.findByIdAndUpdate(id,up);
+        if(result == null)
+        {
+            res.status(404).send("User not found");
+        }
+        else res.send("User updated");
+    } catch (error) {
+        res.status(400).send("Something went wrong");
+    }
+
+})
+
+
 
 //first we should connect to db and then listen to any request
 
