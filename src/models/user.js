@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -30,15 +31,33 @@ const userSchema = new mongoose.Schema(
         type: String, 
         required: true, 
         unique: true, 
-        trim: true 
+        trim: true ,
+        validate : (value) => {
+            if(!validator.isEmail(value))
+            {
+                throw new Error("Email is not valid");
+            }
+        }
     },
     password: { 
         type: String, 
-        required: true 
+        required: true,
+        validate : (value) => {
+            if(!validator.isStrongPassword(value))
+            {
+                throw new Error("Set a strong password");
+            }
+        }
     },
     profilePhoto: {
         type : String,
-        default : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+        default : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+        validate : (value) => {
+            if(!validator.isURL(value))
+            {
+                throw new Error("Enter valid URL");
+            }
+        }
     },
     tags: {
       type: [String],

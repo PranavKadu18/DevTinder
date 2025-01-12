@@ -95,8 +95,8 @@ app.delete("/user",async (req,res) => {
     }
 })
 
-app.patch("/user",async (req,res) => {
-    const id = req.body.id;
+app.patch("/user/:id",async (req,res) => {
+    const id = req.params.id;
     const up = req.body;
 
     const cannotUpdate = ["email"];
@@ -119,7 +119,7 @@ app.patch("/user",async (req,res) => {
             throw new Error("Bio is too long. Keep it short ..!")
         }
 
-        const result = await User.findByIdAndUpdate(id,up);
+        const result = await User.findByIdAndUpdate(id,up,{runValidators:true});
         // console.log(result);
         if(result == null)
         {
