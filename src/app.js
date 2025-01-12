@@ -14,13 +14,15 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("data saved sucessfully to the db");
   } catch (error) {
-    res.status(400).send("Error occured while sign up");
+    res.status(400).send("Error occured while sign up " + error);
   }
 });
 
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
+    const count = await User.countDocuments({});
+    console.log(count);
     res.send(users);
   } catch (error) {
     res.status(400).send("Something went wrong");
@@ -61,6 +63,22 @@ app.get("/user",async (req,res) => {
 //   }
 // });
 
+// app.patch("/byemail",async (req,res) => {
+//     const up = req.body;
+
+//     try {
+//         const result = await User.findOneAndUpdate({email : req.body.email},up);
+//         // console.log(result);
+//         if(result == null)
+//         {
+//             res.status(404).send("User not found");
+//         }
+//         else res.send("User updated");
+//     } catch (error) {
+//         res.status(400).send("Something went wrong");
+//     }
+
+// })
 
 app.delete("/user",async (req,res) => {
     const id = req.body.id
@@ -83,6 +101,7 @@ app.patch("/user",async (req,res) => {
 
     try {
         const result = await User.findByIdAndUpdate(id,up);
+        // console.log(result);
         if(result == null)
         {
             res.status(404).send("User not found");
