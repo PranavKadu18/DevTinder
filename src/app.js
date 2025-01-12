@@ -99,7 +99,26 @@ app.patch("/user",async (req,res) => {
     const id = req.body.id;
     const up = req.body;
 
+    const cannotUpdate = ["email"];
+
     try {
+        //check if user is updateing fields that are not allowed to update
+        Object.keys(up).forEach((key) => {
+            if(cannotUpdate.includes(key)) throw new Error("Cant update " + key); 
+        })
+
+        //tags should not be more than 3
+        if(up.tags && up.tags.length > 3)
+        {
+            throw new Error("Too many tags");
+        }
+
+        //bio validation
+        if(up.bio && up.bio.length > 100)
+        {
+            throw new Error("Bio is too long. Keep it short ..!")
+        }
+
         const result = await User.findByIdAndUpdate(id,up);
         // console.log(result);
         if(result == null)
@@ -108,7 +127,7 @@ app.patch("/user",async (req,res) => {
         }
         else res.send("User updated");
     } catch (error) {
-        res.status(400).send("Something went wrong");
+        res.status(400).send("Something went wrong " + error);
     }
 
 })
