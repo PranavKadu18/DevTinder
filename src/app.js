@@ -35,8 +35,40 @@ app.post("/signup", async (req, res) => {
   } catch (error) {
     res.status(400).send("Error occured while sign up " + error);
   }
-  
+
 });
+
+app.post("/login",async (req,res) => {
+  try {
+
+    const {email,password} = req.body;
+
+    if(!validator.isEmail(email))
+    {
+      throw new Error("Enter a valid Email ID");
+    }
+
+    const data = await User.findOne({email : email});
+    if(!data)
+    {
+      throw new Error("Email is not registered");
+    }
+
+    const check = await bcrypt.compare(password,data.password);
+
+    if(check)
+    {
+      res.send("Logged in successfully");
+    }
+    else
+    {
+      res.send("Invalid password");
+    }
+
+  } catch (error) {
+    res.status(400).send("Error occured while log in " + error);
+  }
+})
 
 app.get("/feed", async (req, res) => {
   try {
