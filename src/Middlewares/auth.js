@@ -21,7 +21,7 @@ const userAuth = async (req,res,next) => {
             throw new Error("You dont have any account");
         }
         //token is valid we can proceed
-        console.log(data);
+        // console.log(data);
         
         req.data = data;
         next();

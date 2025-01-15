@@ -54,18 +54,18 @@ app.post("/login",async (req,res) => {
     }
 
     //check if email is present
-    const data = await User.findOne({email : email});
+    const data = await User.findOne({email : email});           //this data is also an intance of model User
     if(!data)
     {
       throw new Error("Email is not registered");
     }
 
-    const check = await bcrypt.compare(password,data.password);
+    const check = await data.checkPass(password);
 
     if(check)
     {
       //create a JWT token
-      const token = await jwt.sign({_id : data._id},"8698738044",{expiresIn : "7d"});
+      const token = await data.getJWT();                 //using the instance of model we are calling the schema meathod
       
       //send the cookie
       res.cookie("token",token);
