@@ -90,6 +90,24 @@ app.get("/profile",userAuth,async (req,res) => {
   }
 })
 
+app.post("/sendConnectionReq",userAuth,(req,res) => {
+  try {
+    const data = req.data;
+    res.send(data.firstName + " is sending the connection request");
+  } catch (error) {
+    res.status(400).send("Error : " + error.message)
+  }
+})
+
+app.get("/logout",userAuth,(req,res) => {
+  try {
+    res.clearCookie('token');
+    res.send("User Logged out successfully");
+  } catch (error) {
+    res.status(400).send("Error : " + error.message);
+  }
+})
+
 
 
 
