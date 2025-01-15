@@ -4,10 +4,14 @@ const { User } = require("./models/user");
 const bcrypt = require("bcrypt");
 const validator = require("validator");
 const {validateSignup} = require("./utils/validationSignup")
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+const {userAuth} = require("./Middlewares/auth")
 
 const app = express();
 
 app.use(express.json()); //middleware to convert JSON to JS object
+app.use(cookieParser()); //middleware to make cookie readable
 
 app.post("/signup", async (req, res) => {
   //we need to create the instance of model to add the data to db
@@ -43,11 +47,13 @@ app.post("/login",async (req,res) => {
 
     const {email,password} = req.body;
 
+    //validating users email and pass
     if(!validator.isEmail(email))
     {
       throw new Error("Enter a valid Email ID");
     }
 
+    //check if email is present
     const data = await User.findOne({email : email});
     if(!data)
     {
@@ -58,7 +64,12 @@ app.post("/login",async (req,res) => {
 
     if(check)
     {
-      res.send("Logged in successfully");
+      //create a JWT token
+      const token = await jwt.sign({_id : data._id},"8698738044",{expiresIn : "7d"});
+      
+      //send the cookie
+      res.cookie("token",token);
+      res.send("User Logged In Successfully")
     }
     else
     {
@@ -70,115 +81,20 @@ app.post("/login",async (req,res) => {
   }
 })
 
-app.get("/feed", async (req, res) => {
+app.get("/profile",userAuth,async (req,res) => {
   try {
-    const users = await User.find({});
-    const count = await User.countDocuments({});
-    console.log(count);
-    res.send(users);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
+    const data = req.data;
+    res.send(data);
+  } catch (err) {
+    res.status(400).send("Error : " + err.message );
   }
-});
+})
 
-app.get("/user", async (req, res) => {
-  const id = req.body.id;
 
-  try {
-    const result = await User.findById(id);
-    if (result == null) {
-      res.status(404).send("User not found");
-    } else res.send(result);
-  } catch (error) {
-    res.status(400).send("Something went wrong");
-  }
-});
 
-// app.get("/byemail", async (req, res) => {
-//   const userEmail = req.body.email;
 
-//   try {
-//     const result = await User.findOne({ email: userEmail });
-
-//     if (result == null) {
-//       res.status(404).send("user not found");
-//     }
-//     else
-//     {
-//         res.send(result);
-//     }
-
-//   } catch (error) {
-//     res.status(400).send("Something went wrong");
-//   }
-// });
-
-// app.patch("/byemail",async (req,res) => {
-//     const up = req.body;
-
-//     try {
-//         const result = await User.findOneAndUpdate({email : req.body.email},up);
-//         // console.log(result);
-//         if(result == null)
-//         {
-//             res.status(404).send("User not found");
-//         }
-//         else res.send("User updated");
-//     } catch (error) {
-//         res.status(400).send("Something went wrong");
-//     }
-
-// })
-
-app.delete("/user", async (req, res) => {
-  const id = req.body.id;
-
-  try {
-    const result = await User.findByIdAndDelete(id);
-    if (result == null) {
-      res.status(404).send("user not found");
-    } else res.send("deleted the user");
-  } catch (error) {
-    res.status(400).send("Something went wrong");
-  }
-});
-
-app.patch("/user/:id", async (req, res) => {
-  const id = req.params.id;
-  const up = req.body;
-
-  const cannotUpdate = ["email"];
-
-  try {
-    //check if user is updateing fields that are not allowed to update
-    Object.keys(up).forEach((key) => {
-      if (cannotUpdate.includes(key)) throw new Error("Cant update " + key);
-    });
-
-    //tags should not be more than 3
-    if (up.tags && up.tags.length > 3) {
-      throw new Error("Too many tags");
-    }
-
-    //bio validation
-    if (up.bio && up.bio.length > 100) {
-      throw new Error("Bio is too long. Keep it short ..!");
-    }
-
-    const result = await User.findByIdAndUpdate(id, up, {
-      runValidators: true,
-    });
-    // console.log(result);
-    if (result == null) {
-      res.status(404).send("User not found");
-    } else res.send("User updated");
-  } catch (error) {
-    res.status(400).send("Something went wrong " + error);
-  }
-});
 
 //first we should connect to db and then listen to any request
-
 connect()
   .then(() => {
     //connect

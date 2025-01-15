@@ -1,29 +1,35 @@
-const adminAuth = (req,res,next) => {
-    key = "xyz";
-    if(key === "xyz")
-    {
+const jwt = require("jsonwebtoken")
+const {User} = require("../models/user")
+
+const userAuth = async (req,res,next) => {
+   try {
+        //get the token and verify it
+        const {token} = req.cookies;
+
+        if(!token)
+        {
+            throw new Error("Try to Log in first");
+        }
+
+        const decodeObj = await jwt.verify(token,"8698738044");
+        const {_id} = decodeObj;
+
+        const data = await User.findById(_id);
+
+        if(!data)
+        {
+            throw new Error("You dont have any account");
+        }
+        //token is valid we can proceed
+        console.log(data);
+        
+        req.data = data;
         next();
-    }
-    else{
-        res.sendStatus(401).send("acess denied");
-    }
+   } catch (error) {
+        res.status(400).send("Error : " + error.message);
+   }
 }
-
-const userAuth = (req,res,next) => {
-    key = "xyz";
-    if(key === "xyhjz")
-    {
-        next();
-    }
-    else{
-        res.sendStatus(401).send("acess denied");
-    }
-}
-
-console.log("are woh are woh !");
-
 
 module.exports = {
-    adminAuth,
     userAuth
 }
