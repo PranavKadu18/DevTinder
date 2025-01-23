@@ -21,6 +21,9 @@ const connectionSchema = new mongoose.Schema({
     }
 },{timestamps : true})
 
+//adding compound index
+connectionSchema.index({fromUserId : 1,toUserId : 1});
+
 //this is pre middleware that runs before 'save'
 connectionSchema.pre('save',function (next) {
     //this here reffers to the thing that is going to be saved or the current request
