@@ -70,7 +70,7 @@ authRouter.post("/login",async (req,res) => {
       }
       else
       {
-        res.send("Invalid password");
+        res.status(400).send("Invalid password");
       }
   
     } catch (error) {
