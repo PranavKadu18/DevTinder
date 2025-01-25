@@ -4,7 +4,8 @@ const cookieParser = require("cookie-parser")
 const { authRouter } = require("./Router/authRouter");
 const { profileRouter } = require("./Router/profileRouter");
 const {connectionRouter} = require("./Router/connectionRouter")
-
+const {userRouter} = require("./Router/userRouter");
+ 
 const app = express();
 
 app.use(express.json()); //middleware to convert JSON to JS object
@@ -14,6 +15,7 @@ app.use(cookieParser()); //middleware to make cookie readable
 app.use("/",authRouter);
 app.use("/",profileRouter);
 app.use("/",connectionRouter);
+app.use("/",userRouter);
 
 
 
