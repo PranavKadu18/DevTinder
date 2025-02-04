@@ -6,7 +6,7 @@ const { User } = require("../models/user");
 
 const userRouter = express.Router();
 
-const USER_DATA = "firstName lastName gender age profilePhoto bio"
+const USER_DATA = "firstName lastName gender age profilePhoto bio tags"
 
 userRouter.get("/user/request/received", userAuth, async (req, res) => {
   try {
@@ -15,7 +15,7 @@ userRouter.get("/user/request/received", userAuth, async (req, res) => {
     const receivedConnectionReq = await ConnectionRequest.find({
       toUserId: _id,
       status: "Intrested",
-    }).populate("fromUserId", "firstName lastName");
+    }).populate("fromUserId", "firstName lastName profilePhoto");
 
     if(!receivedConnectionReq)
     {

@@ -8,7 +8,7 @@ const userAuth = async (req,res,next) => {
 
         if(!token)
         {
-            throw new Error("Try to Log in first");
+            return res.status(401).send("Try to login first")
         }
 
         const decodeObj = await jwt.verify(token,"8698738044");

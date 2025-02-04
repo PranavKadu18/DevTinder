@@ -5,9 +5,14 @@ const { authRouter } = require("./Router/authRouter");
 const { profileRouter } = require("./Router/profileRouter");
 const {connectionRouter} = require("./Router/connectionRouter")
 const {userRouter} = require("./Router/userRouter");
- 
+const cors = require('cors'); 
+
 const app = express();
 
+app.use(cors({
+  origin:"http://localhost:5173",
+  credentials:true,
+}));
 app.use(express.json()); //middleware to convert JSON to JS object
 app.use(cookieParser()); //middleware to make cookie readable
 
