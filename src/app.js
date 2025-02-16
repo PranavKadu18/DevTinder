@@ -9,12 +9,19 @@ const cors = require('cors');
 
 const app = express();
 
+
+
+require('dotenv').config();
+
 app.use(cors({
-  origin:"http://localhost:5173",
+  origin:"http://localhost:5174",
   credentials:true,
 }));
+
 app.use(express.json()); //middleware to convert JSON to JS object
+
 app.use(cookieParser()); //middleware to make cookie readable
+
 
 
 app.use("/",authRouter);
@@ -32,7 +39,7 @@ connect()
     //connect
     console.log("Database connected to the server");
     //then listen
-    app.listen(3000, () => {
+    app.listen(process.env.PORT, () => {
       console.log("Server is listning to port 3000");
     });
   })
