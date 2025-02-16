@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../Middlewares/auth");
 const { ConnectionRequest } = require("../models/connectionReq");
 const { User } = require("../models/user");
+const sendEmail = require("../utils/sendEmail");
 
 const connectionRouter = express.Router();
 
@@ -53,6 +54,11 @@ connectionRouter.post(
       });
 
       const data = await instance.save();
+      const email = sendEmail.run(
+        "A new friend request from " + req.data.firstName,
+        req.data.firstName + " is " + status + " in " + isReceiver.firstName
+      );
+
       res.json({
         message: "Connection request send successfully",
         data,
@@ -88,19 +94,17 @@ connectionRouter.patch(
         toUserId: _id,
       });
 
-      if(isRequestValid)
-      {
+      if (isRequestValid) {
         isRequestValid.status = status;
         await isRequestValid.save();
         return res.json({
-            message : "Request " + status + " successfully"
-        })
+          message: "Request " + status + " successfully",
+        });
       }
 
       res.status(404).json({
-        message : "No such request"
-      })
-
+        message: "No such request",
+      });
     } catch (error) {
       res.status(400).send("Error : " + error.message);
     }
