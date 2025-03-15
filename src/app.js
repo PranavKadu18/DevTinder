@@ -7,7 +7,8 @@ const { authRouter } = require("./Router/authRouter");
 const { profileRouter } = require("./Router/profileRouter");
 const {connectionRouter} = require("./Router/connectionRouter")
 const {userRouter} = require("./Router/userRouter");
-const cors = require('cors'); 
+const cors = require('cors');
+require("./utils/cronjob");
 
 const app = express();
 
