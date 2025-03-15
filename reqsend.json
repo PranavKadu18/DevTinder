@@ -1,0 +1,7 @@
+{
+  "TemplateName": "SendReq",
+  "TemplateContent": {
+    "Subject": "A new friend request from {{senderName}}",
+    "Text": " {{senderName}} is {{status}} in {{receiverName}}"
+  }
+}

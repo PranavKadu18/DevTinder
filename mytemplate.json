@@ -1,0 +1,7 @@
+{
+  "TemplateName": "MyTemplate",
+  "TemplateContent": {
+    "Subject": " {{name}} Your Rizz Is Skyrocketing! Check That Connection Request 👀 {{time}}",
+    "Text": "Yo {{name}},\nSomeone just liked you — your rizz levels are off the charts! 😎\n\nDon't leave them hanging — check your account now and seal the deal! 👊\n\n👉 {{url}}\n\nStay smooth,\nTeam 😏"
+  }
+}
