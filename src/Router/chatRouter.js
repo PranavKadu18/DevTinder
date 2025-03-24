@@ -25,7 +25,7 @@ chatRouter.get("/chats/:targetUserId", userAuth, async (req, res) => {
       status: "Accepted",
     });
 
-    console.log(isFriend);
+    //console.log(isFriend);
     
 
     if (!isFriend) {
