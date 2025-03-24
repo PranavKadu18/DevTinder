@@ -76,6 +76,9 @@ const userSchema = new mongoose.Schema(
     bio: {
         type : String,
         default : "Hi There I am using DevTinder"
+    },
+    lastSeen : {
+      type : String,
     }
   },
   { timestamps: true }

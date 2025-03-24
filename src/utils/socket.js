@@ -2,6 +2,8 @@ const { Server } = require("socket.io");
 const crypto = require("crypto");
 const Chat = require("../models/chat");
 const { format } = require("date-fns");
+const { ConnectionRequest } = require("../models/connectionReq");
+const { User } = require("../models/user");
 
 const getRoomId = ({ targetUserId, userId }) => {
   return crypto
@@ -18,19 +20,34 @@ const initializeSocket = (server) => {
     },
   });
 
-  io.on("connection", (socket) => {
-    socket.on("joinChat", ({ targetUserId, userId, senderName }) => {
+  io.on("connection",(socket) => {
+    socket.on("joinChat", async ({ targetUserId, userId, senderName }) => {
       //create a room as they join chat
       const roomId = getRoomId({ targetUserId, userId });
 
       //console.log(senderName + " joined the room " + roomId);
       socket.join(roomId);
+
+      const result = await User.findByIdAndUpdate(userId,{lastSeen : new Date()});
     });
 
     socket.on(
       "sendMessage",
       async ({ text, senderName, targetUserId, userId }) => {
         try {
+          //check if sender and receiver of messages are friends
+          const isFriend = await ConnectionRequest.findOne({
+            $or: [
+              { fromUserId: targetUserId, toUserId: userId },
+              { fromUserId: userId, toUserId: targetUserId },
+            ],
+            status : "Accepted"
+          });
+
+          if(!isFriend){
+            throw new Error("Unauthorised request to chat");
+          }
+
           //console.log(senderName + " : " + text);
           const roomId = getRoomId({ targetUserId, userId });
 
@@ -40,7 +57,7 @@ const initializeSocket = (server) => {
           });
 
           //console.log("1 : " + chat);
-          
+
           //if chat is not present ie they are chatting for first time create a chat document
           if (!chat) {
             //if no existing chat create one
@@ -52,15 +69,20 @@ const initializeSocket = (server) => {
             //console.log("2 : " + chat);
           }
 
-          const time = format(new Date(),"HH:mm:ss");
+          const time = format(new Date(), "HH:mm:ss");
 
           //if present else not tari pan msg store kar nsel tar var banlay
-          chat.messages.push({senderId:userId,text,time});
+          chat.messages.push({ senderId: userId, text, time });
 
           //save in db
-          await chat.save()
+          await chat.save();
 
-          io.send(roomId).emit("receiveMessage", { text, senderName,time });
+          io.send(roomId).emit("receiveMessage", {
+            text,
+            senderName,
+            time,
+            senderId: userId,
+          });
         } catch (error) {
           console.log("Error : " + error.message);
         }
